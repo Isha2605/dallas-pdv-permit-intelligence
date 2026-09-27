@@ -1,0 +1,8 @@
+# Transformation layer (RAW -> STAGING -> MARTS in Snowflake)
+dbt-core==1.12.5
+dbt-snowflake==1.12.1
+
+# Extract scripts in src/
+requests
+pandas
+python-dotenv

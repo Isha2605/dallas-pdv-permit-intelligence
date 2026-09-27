@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: stg_permits
+    description: >
+      One row per City of Dallas building permit (Jan 2018 - Aug 2020), cast from
+      RAW.PERMITS text columns to proper types, with permit_type split into trade,
+      occupancy and work type.
+    columns:
+      - name: permit_number
+        description: City permit ID. Primary key. Text, because it has leading zeros.
+        tests:
+          - unique
+          - not_null
+      - name: permit_type
+        description: Original permit type with whitespace normalized.
+        tests:
+          - not_null
+      - name: permit_code
+        description: Trade code from permit_type, e.g. BU, PL, EL. Null for signs and demolitions.
+      - name: permit_trade
+        description: Trade parsed from permit_type, e.g. Building, Plumbing, Electrical.
+        tests:
+          - not_null
+      - name: occupancy_type
+        description: Single Family, Multi Family or Commercial. Null for sign permits.
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Single Family', 'Multi Family', 'Commercial']
+      - name: work_type
+        description: Kind of work, e.g. New Construction, Alteration, Renovation.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['New Construction', 'Reconstruction', 'Renovation', 'Alteration',
+                         'Addition', 'Finish Out', 'Demolition']
+      - name: issued_date
+        description: Date the permit was issued.
+        tests:
+          - not_null
+      - name: value
+        description: Declared project valuation in USD.
+      - name: area
+        description: Declared project area in square feet.
+      - name: zip_code
+        description: 5-digit Dallas-area ZIP (75xxx); null if missing or malformed.

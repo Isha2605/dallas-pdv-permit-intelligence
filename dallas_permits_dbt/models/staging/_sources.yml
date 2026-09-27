@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Untouched loads into Snowflake. Every column arrives as VARCHAR.
+    database: DALLAS_PERMITS
+    schema: RAW
+    tables:
+      - name: permits
+        description: >
+          City of Dallas Building Permits (Socrata dataset e7gq-4sah), pulled via the
+          SODA API by src/extract.py and loaded from CSV. Frozen around Aug 2020.
+        columns:
+          - name: permit_number
+            tests:
+              - not_null
+      - name: census_zips
+        description: ZIP-level Census data pulled by src/extract_census.py.

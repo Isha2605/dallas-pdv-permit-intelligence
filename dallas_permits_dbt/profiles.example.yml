@@ -1,0 +1,16 @@
+# Template for profiles.yml (the real one is gitignored).
+# Copy this to profiles.yml in the same folder and fill in your account details.
+# Set the password as an environment variable -- never write it in this file.
+dallas_permits_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: <org>-<account>          # from https://<org>-<account>.snowflakecomputing.com
+      user: <username>
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: <role>
+      warehouse: <warehouse>
+      database: DALLAS_PERMITS
+      schema: STAGING
+      threads: 4

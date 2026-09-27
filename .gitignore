@@ -1,0 +1,22 @@
+# Credentials -- never commit these
+.env
+dallas_permits_dbt/profiles.yml
+
+# Raw/processed data (large files, reproducible via the extract scripts)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# dbt
+dallas_permits_dbt/target/
+dallas_permits_dbt/dbt_packages/
+dallas_permits_dbt/.user.yml
+logs/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
