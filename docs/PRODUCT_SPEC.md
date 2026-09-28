@@ -97,10 +97,10 @@ own: the as-of date moves, tiers shift, new $1M+ projects appear.
 
 1. ✅ RAW → STAGING → MARTS in dbt, reconciled with `check_numbers.py`
 2. ✅ Time-windowed marts: `int_windows` + `int_zip_windows` (single definition of every ZIP metric), `zip_rolling_12m`, `kpi_rolling_12m`; the study period still reproduces `check_numbers.py`
-3. ⬜ Simulated feed + replay script + incremental dbt models + freshness checks
-4. ⬜ Orchestration (scheduled GitHub Action)
-5. ⬜ API (read-only user, cache, fallback)
-6. ⬜ Front end: explore mode first, then the guided intro
+3. ⏸ Simulated feed + replay + incremental models: **deferred** until there is live data
+4. ⏸ Orchestration: **deferred** (same reason)
+5. ⏸ API: **deferred**. For now the dashboard reads JSON exported by `src/export_dashboard_data.py`, behind a swappable data module
+6. ⬜ Front end: explore mode + guided intro, built in Codex from `docs/CODEX_PROMPT.md`
 7. ⬜ README, methodology page, `dbt docs` lineage screenshot
 
 ## 7. Decisions
