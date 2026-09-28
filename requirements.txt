@@ -6,3 +6,4 @@ dbt-snowflake==1.12.1
 requests
 pandas
 python-dotenv
+scipy          # pandas uses it for the Spearman rank correlation in check_numbers.py

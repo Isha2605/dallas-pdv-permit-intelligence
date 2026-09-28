@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: zip_development
+    description: >
+      One row per ZIP in the permit data: permit activity, development tier, Census
+      context, housing investment per resident, and income vs housing ranks.
+      The map and ZIP detail panel read from this.
+    columns:
+      - name: zip_code
+        tests:
+          - unique
+          - not_null
+      - name: development_tier
+        description: Built up (>= 30 $1M+ projects per 1,000 permits), Mixed (>= 10), else Patched up.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Built up', 'Mixed', 'Patched up']
+      - name: beats_income_by
+        description: income_rank - housing_rank. Positive = more housing investment than income predicts. Neighborhoods only.
+
+  - name: zip_top_housing_work
+    description: The five most common kinds of housing work in each ZIP (ZIP detail panel).
+    columns:
+      - name: zip_code
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('zip_development')
+                field: zip_code
+      - name: rank_in_zip
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+
+  - name: kpi_summary
+    description: One row with every headline number on the dashboard.
+
+  - name: tier_quarterly_big_projects
+    description: $1M+ projects in mapped ZIPs per quarter, and the share that went to built-up ZIPs.
+    columns:
+      - name: quarter_start
+        tests:
+          - unique
+          - not_null
+
+  - name: tier_work_mix
+    description: Share of permits by work stage within each development tier (mapped ZIPs).
+    columns:
+      - name: development_tier
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Built up', 'Mixed', 'Patched up']
+      - name: work_stage
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['New construction', 'Alterations', 'Other']
+
+  - name: zip_comparison_pairs
+    description: Built-up vs patched-up ZIPs with permit counts within 10%, ranked by value ratio.
+    columns:
+      - name: pair_rank
+        tests:
+          - unique
+          - not_null
