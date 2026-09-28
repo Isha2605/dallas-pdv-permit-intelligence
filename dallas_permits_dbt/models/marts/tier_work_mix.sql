@@ -1,5 +1,5 @@
 -- Share of permits in each work stage, by development tier (mapped ZIPs).
--- Patched-up ZIPs mostly repair; built-up ZIPs build new.
+-- Mostly-maintenance ZIPs mostly repair; high-investment ZIPs build new.
 
 with mapped as (
 

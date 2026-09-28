@@ -46,11 +46,11 @@ tiers as (
 
     select
         count(*)                                  as mapped_zip_count,
-        count_if(development_tier = 'Built up')   as built_up_zip_count,
-        count_if(development_tier = 'Mixed')      as mixed_zip_count,
-        count_if(development_tier = 'Patched up') as patched_up_zip_count,
-        sum(iff(development_tier = 'Built up', total_value, 0)) / sum(total_value)
-                                                  as built_up_share_of_value
+        count_if(development_tier = 'High investment')   as high_investment_zip_count,
+        count_if(development_tier = 'Moderate investment')      as moderate_investment_zip_count,
+        count_if(development_tier = 'Mostly maintenance') as mostly_maintenance_zip_count,
+        sum(iff(development_tier = 'High investment', total_value, 0)) / sum(total_value)
+                                                  as high_investment_share_of_value
     from mapped
 
 ),

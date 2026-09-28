@@ -16,7 +16,7 @@ MIN_PERMITS = 100            # fewer than this is too few to judge a ZIP
 MIN_PCT_DALLAS = 90          # data gap: no ZIP falls between 72.2% and 94.3%
 MIN_POPULATION = 10_000      # data gap: no Dallas ZIP falls between 8,673 and 14,308
 TIER_EDGES = [0, 10, 30, float("inf")]
-TIER_NAMES = ["Patched up", "Mixed", "Built up"]
+TIER_NAMES = ["Mostly maintenance", "Moderate investment", "High investment"]
 RESIDENTIAL = "SINGLE FAMILY|MULTI-FAMILY|DUPLEX|CONDO|TOWNHOUSE|APARTMENT"
 
 
@@ -77,22 +77,22 @@ def main():
     counts = mapped["tier"].value_counts().reindex(TIER_NAMES)
     print("  ".join(f"{n}: {counts[n]}" for n in reversed(TIER_NAMES)))
 
-    section("KPI 3 -- built-up ZIPs' share of value (mapped ZIPs)")
-    bu = mapped[mapped["tier"] == "Built up"]
-    print(f"{len(bu)} built-up ZIPs hold {100*bu['total'].sum()/mapped['total'].sum():.0f}% "
+    section("KPI 3 -- high-investment ZIPs' share of value (mapped ZIPs)")
+    bu = mapped[mapped["tier"] == "High investment"]
+    print(f"{len(bu)} high-investment ZIPs hold {100*bu['total'].sum()/mapped['total'].sum():.0f}% "
           f"of the value in mapped ZIPs")
 
-    section("Supporting line -- built-up share of $1M+ projects by quarter")
+    section("Supporting line -- high-investment share of $1M+ projects by quarter")
     tier_of = mapped["tier"]
     q = p[p["is_big"] & p["zip_code"].isin(mapped.index)].copy()
     q["tier"] = q["zip_code"].map(tier_of)
     q["quarter"] = q["issued_date"].dt.to_period("Q")
-    share = q.groupby("quarter")["tier"].apply(lambda s: (s == "Built up").mean())
-    print(f"Built-up ZIPs got the majority of $1M+ projects in {(share > 0.5).sum()} of {len(share)} quarters "
+    share = q.groupby("quarter")["tier"].apply(lambda s: (s == "High investment").mean())
+    print(f"High-investment ZIPs got the majority of $1M+ projects in {(share > 0.5).sum()} of {len(share)} quarters "
           f"(range {100*share.min():.0f}%-{100*share.max():.0f}%)")
 
     section("Chart 3 -- side-by-side pair (opposite tiers, permit counts within 10%)")
-    b, pu = mapped[mapped["tier"] == "Built up"], mapped[mapped["tier"] == "Patched up"]
+    b, pu = mapped[mapped["tier"] == "High investment"], mapped[mapped["tier"] == "Mostly maintenance"]
     pairs = [(ra.total / rb.total, a, bz) for a, ra in b.iterrows() for bz, rb in pu.iterrows()
              if abs(ra.permits - rb.permits) / max(ra.permits, rb.permits) <= 0.10]
     for ratio, a, bz in sorted(pairs, reverse=True)[:3]:

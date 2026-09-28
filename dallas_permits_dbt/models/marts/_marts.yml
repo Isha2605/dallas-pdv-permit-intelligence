@@ -12,12 +12,12 @@ models:
           - unique
           - not_null
       - name: development_tier
-        description: Built up (>= 30 $1M+ projects per 1,000 permits), Mixed (>= 10), else Patched up.
+        description: High investment (>= 30 $1M+ projects per 1,000 permits), Moderate investment (>= 10), else Mostly maintenance.
         tests:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Built up', 'Mixed', 'Patched up']
+                values: ['High investment', 'Moderate investment', 'Mostly maintenance']
       - name: beats_income_by
         description: income_rank - housing_rank. Positive = more housing investment than income predicts. Neighborhoods only.
 
@@ -42,7 +42,7 @@ models:
     description: One row with every headline number on the dashboard.
 
   - name: tier_quarterly_big_projects
-    description: $1M+ projects in mapped ZIPs per quarter, and the share that went to built-up ZIPs.
+    description: $1M+ projects in mapped ZIPs per quarter, and the share that went to high-investment ZIPs.
     columns:
       - name: quarter_start
         tests:
@@ -56,7 +56,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['Built up', 'Mixed', 'Patched up']
+                values: ['High investment', 'Moderate investment', 'Mostly maintenance']
       - name: work_stage
         tests:
           - accepted_values:
@@ -64,9 +64,32 @@ models:
                 values: ['New construction', 'Alterations', 'Other']
 
   - name: zip_comparison_pairs
-    description: Built-up vs patched-up ZIPs with permit counts within 10%, ranked by value ratio.
+    description: High-investment vs mostly-maintenance ZIPs with permit counts within 10%, ranked by value ratio.
     columns:
       - name: pair_rank
+        tests:
+          - unique
+          - not_null
+
+  - name: zip_rolling_12m
+    description: >
+      One row per ZIP per month: every zip_development metric over the 12 months ending
+      that month. is_latest marks the current state; tier_changed flags movement.
+    columns:
+      - name: as_of_date
+        tests:
+          - not_null
+      - name: development_tier
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['High investment', 'Moderate investment', 'Mostly maintenance']
+
+  - name: kpi_rolling_12m
+    description: One row per month with the headline numbers over the trailing 12 months. The live header reads the is_latest row.
+    columns:
+      - name: as_of_date
         tests:
           - unique
           - not_null

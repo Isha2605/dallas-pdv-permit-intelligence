@@ -26,10 +26,10 @@ numbers to non-technical leadership.
 
 **Act 1: money is concentrated**
 - 2,399 permits of $1M+ = 1.9% of permits but 66% of all value.
-- 43 mapped ZIPs: 10 Built up, 12 Mixed, 21 Patched up. Built-up ZIPs hold 49% of value.
-- Built-up ZIPs got most $1M+ projects in 10 of 11 quarters.
+- 43 mapped ZIPs: 10 High investment, 12 Moderate investment, 21 Mostly maintenance. High-investment ZIPs hold 49% of value.
+- High-investment ZIPs got most $1M+ projects in 10 of 11 quarters.
 - Same activity, different money: 75226 vs 75254, ~1,000 permits each, $460M vs $18M (25×).
-- Work mix: new construction is 8% of permits in Patched up vs 18% in Built up.
+- Work mix: new construction is 8% of permits in Mostly maintenance vs 18% in High investment.
 
 **Act 2: housing tells a different story**
 - Income vs housing-investment-per-resident rank correlation: +0.48 (36 neighborhoods).
@@ -45,7 +45,7 @@ Reference calculation: `src/check_numbers.py`. The dbt marts reproduce every num
 ## 4. Product experience: story + explore
 
 **Part 1: guided intro (3–4 screens, skippable)**
-1. *Where Dallas builds.* 2% of permits = 66% of the money; the map highlights built-up ZIPs.
+1. *Where Dallas builds.* 2% of permits = 66% of the money; the map highlights high-investment ZIPs.
 2. *Same activity, different money.* The side-by-side pair.
 3. *Housing tells a different story.* The income vs housing chart, with 75216 highlighted.
 4. *Why.* The new-construction share, then "Explore the city →".
@@ -96,21 +96,21 @@ own: the as-of date moves, tiers shift, new $1M+ projects appear.
 ## 6. Build order
 
 1. ✅ RAW → STAGING → MARTS in dbt, reconciled with `check_numbers.py`
-2. ⬜ Time-windowed marts (tiers, ranks and KPIs per rolling window + an as-of date)
+2. ✅ Time-windowed marts: `int_windows` + `int_zip_windows` (single definition of every ZIP metric), `zip_rolling_12m`, `kpi_rolling_12m`; the study period still reproduces `check_numbers.py`
 3. ⬜ Simulated feed + replay script + incremental dbt models + freshness checks
 4. ⬜ Orchestration (scheduled GitHub Action)
 5. ⬜ API (read-only user, cache, fallback)
 6. ⬜ Front end: explore mode first, then the guided intro
 7. ⬜ README, methodology page, `dbt docs` lineage screenshot
 
-## 7. Open decisions
+## 7. Decisions
 
-| # | Decision | Default until decided |
+| # | Decision | Status |
 |---|---|---|
-| 1 | Window length: rolling 12 or 24 months? | 12 months |
-| 2 | Cutoffs (≥100 permits, tier edges 10/30) were set on 32 months of data. Keep them fixed, or re-derive them for the window? | Re-check them against the 12-month data before deciding |
-| 3 | Tier names for a city audience ("Patched up" may read as dismissive) | Keep current names for now |
-| 4 | Snowflake account: trial or paid? A trial ending would take the live API offline (the fallback copy covers it) | Check Admin → Billing |
-| 5 | Hosting: API on Render, Fly or Railway; front end on GitHub Pages or Vercel | Decide at step 5 |
-| 6 | Automation login: key-pair auth for a service user instead of a password | Key-pair |
-| 7 | Job posting: does it name Power BI or Tableau? | Unknown; paste the posting |
+| 1 | Window length | **Rolling 12 months.** All 43 ZIPs stay mapped; matches annual planning cycles. |
+| 2 | Cutoffs (>= 100 permits, tier edges 10/30) | **Kept fixed across windows.** Tested on 12- and 24-month windows: the map stays at 42-43 ZIPs, and fixed edges mean a tier change reflects a real change. 5-9 ZIPs sit near an edge; add a two-month rule if monthly flips get noisy. |
+| 3 | Tier names | **High investment / Moderate investment / Mostly maintenance** (was Built up / Mixed / Patched up). Neutral for a city audience. |
+| 4 | Snowflake account: trial or paid? | Open. Check Admin -> Billing; the API's fallback copy covers a trial ending. |
+| 5 | Hosting (API: Render/Fly/Railway; front end: GitHub Pages/Vercel) | Open; decide at step 5. |
+| 6 | Automation login | Key-pair auth for a service user (planned). |
+| 7 | Does the job posting name Power BI or Tableau? | Open; paste the posting. |

@@ -1,6 +1,6 @@
--- Side-by-side pairs: a built-up ZIP and a patched-up ZIP with nearly the same
+-- Side-by-side pairs: a high-investment ZIP and a mostly-maintenance ZIP with nearly the same
 -- number of permits (within 10%), ranked by how many times more value the
--- built-up one drew. Same activity, very different money.
+-- high-investment one drew. Same activity, very different money.
 
 with mapped as (
 
@@ -13,19 +13,19 @@ with mapped as (
 pairs as (
 
     select
-        b.zip_code           as built_up_zip,
-        p.zip_code           as patched_up_zip,
-        b.permit_count       as built_up_permits,
-        p.permit_count       as patched_up_permits,
-        b.total_value        as built_up_value,
-        p.total_value        as patched_up_value,
-        b.big_project_count  as built_up_big_projects,
-        p.big_project_count  as patched_up_big_projects,
+        b.zip_code           as high_investment_zip,
+        p.zip_code           as mostly_maintenance_zip,
+        b.permit_count       as high_investment_permits,
+        p.permit_count       as mostly_maintenance_permits,
+        b.total_value        as high_investment_value,
+        p.total_value        as mostly_maintenance_value,
+        b.big_project_count  as high_investment_big_projects,
+        p.big_project_count  as mostly_maintenance_big_projects,
         b.total_value / p.total_value as value_ratio
     from mapped b
     join mapped p
-      on b.development_tier = 'Built up'
-     and p.development_tier = 'Patched up'
+      on b.development_tier = 'High investment'
+     and p.development_tier = 'Mostly maintenance'
      and abs(b.permit_count - p.permit_count)
          / greatest(b.permit_count, p.permit_count) <= 0.10
 
