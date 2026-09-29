@@ -43,8 +43,7 @@ export default function CityMap({
       attributionControl: true,
     }).setView([32.83, -96.8], 10);
     mapRef.current = map;
-    if (!hero)
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         maxZoom: 18,
@@ -71,14 +70,6 @@ export default function CityMap({
       .then((geo) => {
         if (!alive) return;
         const layer = L.geoJSON(geo, {
-          filter: (feature) =>
-            !hero ||
-            zips.some(
-              (z) =>
-                z.zip_code === feature.properties?.zip_code &&
-                z.is_in_dallas &&
-                z.has_enough_permits,
-            ),
           style: (feature) => {
             const z = zips.find(
               (z) => z.zip_code === feature?.properties?.zip_code,
@@ -94,13 +85,8 @@ export default function CityMap({
                 ? colors[tierKey(z!.development_tier)]
                 : gapColor(z!.beats_income_by!);
             return {
-              fillColor:
-                hero && z?.development_tier !== "High investment"
-                  ? dark
-                    ? "#343c46"
-                    : "#dce3e9"
-                  : fill,
-              fillOpacity: hero ? 1 : 0.82,
+              fillColor: fill,
+              fillOpacity: 0.82,
               color:
                 selected === z?.zip_code
                   ? "#eb6834"
@@ -130,7 +116,7 @@ export default function CityMap({
         );
         const studyGeo = { ...geo, features: studyFeatures };
         map.fitBounds(L.geoJSON(studyGeo).getBounds(), {
-          padding: hero ? [30, 30] : [20, 20],
+          padding: hero ? [16, 16] : [20, 20],
           animate: false,
         });
         if (!hero)
@@ -221,30 +207,14 @@ export default function CityMap({
           Street tiles unavailable. ZIP boundaries remain usable.
         </div>
       )}
-      {!hero && (
+      {(
         <div className="map-caption">
           <span className="eyebrow">DALLAS, TEXAS</span>
           <span>ZIP boundaries · study period</span>
         </div>
       )}
-      {hero && (
-        <span className="map-north" aria-hidden="true">
-          ↑<span>N</span>
-        </span>
-      )}
       <div className="map-legend">
-        {hero ? (
-          <>
-            <span>
-              <i className="high-fill" />
-              High investment
-            </span>
-            <span>
-              <i className="other-study-fill" />
-              Other study ZIPs
-            </span>
-          </>
-        ) : mode === "tier" ? (
+        {mode === "tier" ? (
           tiers.map((tier) => (
             <span key={tier}>
               <i className={`${tierKey(tier)}-fill`} />
@@ -263,7 +233,7 @@ export default function CityMap({
             </span>
           </>
         )}
-        {!hero && (
+        {(
           <span>
             <i className="neutral-fill" />
             Not compared

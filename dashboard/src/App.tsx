@@ -541,7 +541,7 @@ function Story({
               <div className="opening-map-heading">
                 <span className="eyebrow">THE GEOGRAPHY OF INVESTMENT</span>
                 <h2>A concentrated pattern.</h2>
-                <p>High-investment ZIPs stand out in blue.</p>
+                <p>High-investment ZIPs stand out in dark blue.</p>
               </div>
               <Suspense fallback={<MapLoading />}>
                 <CityMap zips={data.zips} dark={dark} hero />
