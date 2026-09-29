@@ -44,7 +44,7 @@ export default function CityMap({
     }).setView([32.83, -96.8], 10);
     mapRef.current = map;
     const basemapKey = import.meta.env.VITE_CARTO_API_KEY;
-    if (basemapKey) L.tileLayer(`https://basemaps.cartocdn.com/${dark ? "dark_nolabels" : "light_nolabels"}/{z}/{x}/{y}.png?api_key=${encodeURIComponent(basemapKey)}`, {
+    if (basemapKey) L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_nolabels" : "light_nolabels"}/{z}/{x}/{y}.png?key=${encodeURIComponent(basemapKey)}`, {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attribution/">CARTO</a>',
         maxZoom: 18,
