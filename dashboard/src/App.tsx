@@ -270,13 +270,21 @@ export default function App() {
               <a
                 key={p}
                 href={`#${p}`}
+                aria-label={pageLabel(p)}
                 aria-current={page === p ? "page" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
                   navigate(p);
                 }}
               >
-                {pageLabel(p)}
+                {p === "methodology" ? (
+                  <>
+                    <span className="nav-full">Methodology</span>
+                    <span className="nav-short">Methods</span>
+                  </>
+                ) : (
+                  pageLabel(p)
+                )}
               </a>
             ))}
           </nav>
@@ -372,7 +380,7 @@ function Story({
   return (
     <div className="story-page">
       <div className="story-top">
-        <span className="eyebrow">A FIELD GUIDE TO DEVELOPMENT</span>
+        <span className="eyebrow">DALLAS / A STUDY OF DEVELOPMENT</span>
         <button className="text-button" onClick={explore}>
           Skip to explore <Icon name="arrow" size={16} />
         </button>
@@ -389,26 +397,33 @@ function Story({
           {step === 0 && (
             <>
               <h1 ref={heading} tabIndex={-1}>
-                Where Dallas
+                A few permits.
                 <br />
-                <em>builds.</em>
+                <em>Most of the value.</em>
               </h1>
               <p className="story-deck">
-                A small share of projects shapes a big share of the city.
+                Where Dallas builds—and where the money goes.
               </p>
-              <div className="hero-stat">
-                <strong>{percent(k.big_project_share_of_permits)}</strong>
-                <span>
-                  of permits drive{" "}
-                  <b>{percent(k.big_project_share_of_value)}</b>
-                  <br />
-                  of all declared value.
+              <div
+                className="concentration-stat"
+                aria-label={`${percent(k.big_project_share_of_permits)} of permits account for ${percent(k.big_project_share_of_value)} of declared value`}
+              >
+                <div>
+                  <strong>{percent(k.big_project_share_of_permits)}</strong>
+                  <span>of all permits</span>
+                </div>
+                <span className="stat-connector" aria-hidden="true">
+                  <Icon name="arrow" size={32} />
                 </span>
+                <div>
+                  <strong>{percent(k.big_project_share_of_value)}</strong>
+                  <span>of declared value</span>
+                </div>
               </div>
               <p className="story-body">
-                Behind {number(k.total_permits)} building permits is a story
-                about where investment goes—and what that means for Dallas
-                neighborhoods.
+                Permits valued at $1 million or more account for most of the
+                city’s declared construction value. Explore where that activity
+                concentrates, and how the picture changes for housing.
               </p>
               <Button onClick={() => next(1)}>
                 Follow the money <Icon name="arrow" />
@@ -522,18 +537,26 @@ function Story({
         </div>
         <div className="story-visual">
           {step === 0 ? (
-            <>
+            <div className="opening-map-card">
+              <div className="opening-map-heading">
+                <span className="eyebrow">THE GEOGRAPHY OF INVESTMENT</span>
+                <h2>A concentrated pattern.</h2>
+                <p>High-investment ZIPs stand out in blue.</p>
+              </div>
               <Suspense fallback={<MapLoading />}>
                 <CityMap zips={data.zips} dark={dark} hero />
               </Suspense>
               <div className="map-insight">
-                <strong>
-                  {k.high_investment_zip_count} ZIPs.{" "}
-                  {percent(k.high_investment_share_of_value)} of the value.
-                </strong>
-                <span>High-investment ZIPs, highlighted on the map.</span>
+                <div>
+                  <strong>{k.high_investment_zip_count}</strong>
+                  <span>high-investment ZIPs</span>
+                </div>
+                <div>
+                  <strong>{percent(k.high_investment_share_of_value)}</strong>
+                  <span>of declared value</span>
+                </div>
               </div>
-            </>
+            </div>
           ) : step === 1 ? (
             <>
               <PairChart pair={pair} />

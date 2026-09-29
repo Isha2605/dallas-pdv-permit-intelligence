@@ -122,6 +122,20 @@ export function RankChart({
   const highlighted = new Set(
     [...sorted.slice(0, 5), ...sorted.slice(-5)].map((z) => z.zip_code),
   );
+  // Editorial label offsets keep the highlighted neighbors from colliding.
+  // These affect annotation placement only, never ranks or dot positions.
+  const labelOffsets: Record<string, [number, number]> = {
+    "75212": [-12, -18],
+    "75203": [-12, 16],
+    "75237": [-14, 4],
+    "75215": [-14, 5],
+    "75216": [-14, 5],
+    "75249": [-12, -8],
+    "75254": [12, 5],
+    "75233": [12, -10],
+    "75248": [10, -12],
+    "75238": [10, 7],
+  };
   const [active, setActive] = useState<Zip | null>(null);
   const { ref, width } = usePlotWidth();
   const x = scaleLinear()
@@ -177,6 +191,7 @@ export function RankChart({
           {ranked.map((z) => {
             const isStory = z.zip_code === "75216";
             const marked = highlighted.has(z.zip_code);
+            const offset = labelOffsets[z.zip_code] ?? [10, -10];
             return (
               <g key={z.zip_code}>
                 <circle
@@ -208,14 +223,9 @@ export function RankChart({
                 {marked && (width >= 450 || isStory) && (
                   <text
                     className={isStory ? "story-label" : ""}
-                    x={x(z.income_rank!) + (z.income_rank! > 32 ? -12 : 10)}
-                    y={
-                      y(z.housing_rank!) +
-                      (z.zip_code === "75215" || z.zip_code === "75248"
-                        ? 18
-                        : -10)
-                    }
-                    textAnchor={z.income_rank! > 32 ? "end" : "start"}
+                    x={x(z.income_rank!) + offset[0]}
+                    y={y(z.housing_rank!) + offset[1]}
+                    textAnchor={offset[0] < 0 ? "end" : "start"}
                   >
                     {z.zip_code}
                   </text>
