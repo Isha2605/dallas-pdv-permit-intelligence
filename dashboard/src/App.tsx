@@ -525,8 +525,8 @@ function Story({
               <div className="guardrail">
                 <strong>Beats expectations, not the city.</strong>
                 <p>
-                  {money(z.housing_value_per_resident, true)} per resident is still
-                  below the city median of{" "}
+                  {money(z.housing_value_per_resident, true)} per resident is
+                  still below the city median of{" "}
                   {money(k.median_housing_value_per_resident, true)}.
                 </p>
               </div>
@@ -590,7 +590,9 @@ function Story({
                 {[z, other].map((zip) => (
                   <div key={zip.zip_code}>
                     <span>ZIP {zip.zip_code}</span>
-                    <strong>{money(zip.housing_value_per_resident, true)}</strong>
+                    <strong>
+                      {money(zip.housing_value_per_resident, true)}
+                    </strong>
                     <p>housing value / resident</p>
                     <span>
                       {percent(zip.new_construction_share_of_housing)} from new
@@ -618,26 +620,34 @@ function Story({
             </button>
           ))}
         </div>
-
       </div>
-      {step === 0 && <div className="study-totals">
-        <div>
-          <strong>{number(k.total_permits)}</strong>
-          <span>building permits</span>
+      {step === 0 && (
+        <div className="study-totals">
+          <div>
+            <strong>{number(k.total_permits)}</strong>
+            <span>building permits</span>
+          </div>
+          <div>
+            <strong>
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                notation: "compact",
+                maximumFractionDigits: 2,
+              }).format(k.total_value)}
+            </strong>
+            <span>declared permit value</span>
+          </div>
+          <div>
+            <strong>{k.mapped_zip_count}</strong>
+            <span>ZIPs in the development study</span>
+          </div>
+          <div>
+            <strong>{k.neighborhood_count}</strong>
+            <span>neighborhoods compared</span>
+          </div>
         </div>
-        <div>
-          <strong>{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2 }).format(k.total_value)}</strong>
-          <span>declared permit value</span>
-        </div>
-        <div>
-          <strong>{k.mapped_zip_count}</strong>
-          <span>ZIPs in the development study</span>
-        </div>
-        <div>
-          <strong>{k.neighborhood_count}</strong>
-          <span>neighborhoods compared</span>
-        </div>
-      </div>}
+      )}
     </div>
   );
 }
@@ -929,10 +939,12 @@ function ZipCard({
       <div className="profile-metrics">
         <Metric
           label="Housing value / resident"
+          precise={money(z.housing_value_per_resident)}
           value={money(z.housing_value_per_resident, true)}
         />
         <Metric
           label="Median household income"
+          precise={money(z.median_household_income)}
           value={money(z.median_household_income, true)}
         />
         <Metric
@@ -957,7 +969,8 @@ function ZipCard({
           <strong>Beats expectations, not the city.</strong>
           <p>
             Below the city median of{" "}
-            {money(data.kpi.median_housing_value_per_resident, true)} per resident.
+            {money(data.kpi.median_housing_value_per_resident, true)} per
+            resident.
           </p>
         </div>
       )}
@@ -1006,8 +1019,17 @@ function ZipCard({
                   {w.permit_count === 1 ? "permit" : "permits"}
                 </small>
               </span>
-              <strong className={w.total_value === 0 ? "no-value" : undefined} title={w.total_value === 0 ? "No value declared" : money(w.total_value)}>
-                {w.total_value === 0 ? "No value declared" : money(w.total_value, true)}
+              <strong
+                className={w.total_value === 0 ? "no-value" : undefined}
+                title={
+                  w.total_value === 0
+                    ? "No value declared"
+                    : money(w.total_value)
+                }
+              >
+                {w.total_value === 0
+                  ? "No value declared"
+                  : money(w.total_value, true)}
               </strong>
             </li>
           ))}
@@ -1044,11 +1066,19 @@ function ZipCard({
     </article>
   );
 }
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({
+  label,
+  value,
+  precise,
+}: {
+  label: string;
+  value: string;
+  precise?: string;
+}) {
   return (
     <div>
       <span>{label}</span>
-      <strong>{value}</strong>
+      <strong title={precise}>{value}</strong>
     </div>
   );
 }

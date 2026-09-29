@@ -235,9 +235,18 @@ export function RankChart({
           })}
         </svg>
         <div className="rank-legend" aria-label="Chart legend">
-          <span><i className="positive-key" />More housing investment than income predicts</span>
-          <span><i className="negative-key" />Less than income predicts</span>
-          <span><i className="diagonal-key" />Expected if housing matched income</span>
+          <span>
+            <i className="positive-key" />
+            More housing investment than income predicts
+          </span>
+          <span>
+            <i className="negative-key" />
+            Less than income predicts
+          </span>
+          <span>
+            <i className="diagonal-key" />
+            Expected if housing matched income
+          </span>
         </div>
         <div className="chart-tooltip" aria-live="polite">
           {active ? (
@@ -440,7 +449,7 @@ export function MixChart({ rows }: { rows: Mix[] }) {
   return (
     <ChartPanel
       title="New construction changes the mix"
-      subtitle={`New construction: ${percent(rows.find(r => r.development_tier === "Mostly maintenance" && r.work_stage === "New construction")?.share_of_tier_permits)} of permits in mostly-maintenance ZIPs vs ${percent(rows.find(r => r.development_tier === "High investment" && r.work_stage === "New construction")?.share_of_tier_permits)} in high-investment ZIPs.`}
+      subtitle={`New construction: ${percent(rows.find((r) => r.development_tier === "Mostly maintenance" && r.work_stage === "New construction")?.share_of_tier_permits)} of permits in mostly-maintenance ZIPs vs ${percent(rows.find((r) => r.development_tier === "High investment" && r.work_stage === "New construction")?.share_of_tier_permits)} in high-investment ZIPs.`}
       headers={["Tier", "Work stage", "Permits", "Share"]}
       rows={rows.map((r) => [
         r.development_tier,
@@ -452,7 +461,19 @@ export function MixChart({ rows }: { rows: Mix[] }) {
       <div className="mix-chart">
         {tiers.map((tier) => (
           <div key={tier}>
-            <p className="mix-row-label"><span>{tier}</span><strong>{percent(rows.find(r => r.development_tier === tier && r.work_stage === "New construction")?.share_of_tier_permits)} new construction</strong></p>
+            <p className="mix-row-label">
+              <span>{tier}</span>
+              <strong>
+                {percent(
+                  rows.find(
+                    (r) =>
+                      r.development_tier === tier &&
+                      r.work_stage === "New construction",
+                  )?.share_of_tier_permits,
+                )}{" "}
+                new construction
+              </strong>
+            </p>
             <div className="stacked-bar">
               {stages.map((stage, i) => {
                 const row = rows.find(
@@ -538,12 +559,48 @@ export function TrendChart({ rows }: { rows: Rolling[] }) {
         role="group"
         aria-label="Housing value per resident over trailing twelve-month windows"
       >
-        {y.ticks(2).map(t => <g key={t}>
-          <line className="grid" x1={65} x2={width - 20} y1={y(t)} y2={y(t)} />
-          <text x={56} y={y(t) + 4} textAnchor="end">{money(t, true)}</text>
-        </g>)}
-        {[valid[0], valid.at(-1)!].map((r, i) => <text key={i} x={x(rows.indexOf(r))} y={y(r.housing_value_per_resident!) - 13} textAnchor={i ? "end" : "start"} className="trend-end-label">{money(r.housing_value_per_resident)}</text>)}
-        {rows.map((r, i) => r.tier_changed && <path key={r.as_of_date} className="tier-change-marker" d={`M${x(i)} 151 l5 7 l-5 7 l-5 -7 Z`} tabIndex={0} role="img" aria-label={`${month(r.as_of_date)}: Moved to ${r.development_tier}`}><title>{month(r.as_of_date)}: Moved to {r.development_tier}</title></path>)}
+        {y.ticks(2).map((t) => (
+          <g key={t}>
+            <line
+              className="grid"
+              x1={65}
+              x2={width - 20}
+              y1={y(t)}
+              y2={y(t)}
+            />
+            <text x={56} y={y(t) + 4} textAnchor="end">
+              {money(t, true)}
+            </text>
+          </g>
+        ))}
+        {[valid[0], valid.at(-1)!].map((r, i) => (
+          <text
+            key={i}
+            x={x(rows.indexOf(r))}
+            y={y(r.housing_value_per_resident!) - 13}
+            textAnchor={i ? "end" : "start"}
+            className="trend-end-label"
+          >
+            {money(r.housing_value_per_resident)}
+          </text>
+        ))}
+        {rows.map(
+          (r, i) =>
+            r.tier_changed && (
+              <path
+                key={r.as_of_date}
+                className="tier-change-marker"
+                d={`M${x(i)} 151 l5 7 l-5 7 l-5 -7 Z`}
+                tabIndex={0}
+                role="img"
+                aria-label={`${month(r.as_of_date)}: Moved to ${r.development_tier}`}
+              >
+                <title>
+                  {month(r.as_of_date)}: Moved to {r.development_tier}
+                </title>
+              </path>
+            ),
+        )}
         <path className="series-line" d={path} />
         {rows.map(
           (r, i) =>

@@ -44,12 +44,16 @@ export default function CityMap({
     }).setView([32.83, -96.8], 10);
     mapRef.current = map;
     const basemapKey = import.meta.env.VITE_CARTO_API_KEY;
-    if (basemapKey) L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_nolabels" : "light_nolabels"}/{z}/{x}/{y}.png?key=${encodeURIComponent(basemapKey)}`, {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attribution/">CARTO</a>',
-        maxZoom: 18,
-        className: "muted-basemap",
-      })
+    if (basemapKey)
+      L.tileLayer(
+        `https://{s}.basemaps.cartocdn.com/${dark ? "dark_nolabels" : "light_nolabels"}/{z}/{x}/{y}.png?key=${encodeURIComponent(basemapKey)}`,
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attribution/">CARTO</a>',
+          maxZoom: 18,
+          className: "muted-basemap",
+        },
+      )
         .on("tileerror", () => {
           if (alive) setTileError(true);
         })
@@ -59,7 +63,7 @@ export default function CityMap({
       high: dark ? "#9ec5f4" : "#104281",
       moderate: dark ? "#3987e5" : "#2a78d6",
       maintenance: dark ? "#184f95" : "#86b6ef",
-      neutral: dark ? "#2c2c2a" : "#e1e0d9",
+      neutral: dark ? "#4b5158" : "#e1e0d9",
       red: dark ? "#e66767" : "#e34948",
       blue: dark ? "#3987e5" : "#2a78d6",
     };
@@ -92,7 +96,7 @@ export default function CityMap({
                 selected === z?.zip_code
                   ? "#eb6834"
                   : dark
-                    ? "#1a1a19"
+                    ? "#1b2024"
                     : "#fcfcfb",
               weight: selected === z?.zip_code ? 3 : 1,
               opacity: 1,
@@ -176,7 +180,7 @@ export default function CityMap({
               feature?.properties.zip_code === selected
                 ? "#eb6834"
                 : dark
-                  ? "#1a1a19"
+                  ? "#1b2024"
                   : "#fcfcfb",
             weight: feature?.properties.zip_code === selected ? 3 : 1,
           });
@@ -208,12 +212,12 @@ export default function CityMap({
           Street tiles unavailable. ZIP boundaries remain usable.
         </div>
       )}
-      {(
+      {
         <div className="map-caption">
           <span className="eyebrow">DALLAS, TEXAS</span>
           <span>ZIP boundaries · study period</span>
         </div>
-      )}
+      }
       <div className="map-legend">
         {mode === "tier" ? (
           tiers.map((tier) => (
@@ -234,12 +238,12 @@ export default function CityMap({
             </span>
           </>
         )}
-        {(
+        {
           <span>
             <i className="neutral-fill" />
             Not compared
           </span>
-        )}
+        }
       </div>
     </div>
   );
