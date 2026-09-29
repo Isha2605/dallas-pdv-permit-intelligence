@@ -3203,3 +3203,19 @@ footer {
 }
 @media (max-width: 1100px) { .explore-map { position: static; max-height: none; } }
 .no-value { color: var(--secondary); font-weight: 400; font-size: 14px; }
+
+.stage-0 { background: var(--orange); }
+.stage-1 { background: #838b95; }
+.stage-2 { background: #d3d7dc; }
+:root[data-theme="dark"] .stage-1 { background: #939ba7; }
+:root[data-theme="dark"] .stage-2 { background: #424b58; }
+.stacked-bar > div + div { border-left: 2px solid var(--surface); }
+.mix-row-label { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mix-row-label strong { font-size: 14px; color: var(--text); }
+.rank-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; font-size: 13px; color: var(--secondary); line-height: 1.5; }
+.rank-legend span { display: flex; align-items: center; gap: 8px; }
+.rank-legend i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.positive-key { background: var(--blue); }
+.negative-key { background: var(--red); }
+.rank-legend .diagonal-key { width: 20px; height: 0; border-top: 2px dashed var(--axis); border-radius: 0; }
+.story-dot { fill: var(--blue); stroke: var(--text); stroke-width: 3px; }

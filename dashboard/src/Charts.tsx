@@ -234,6 +234,11 @@ export function RankChart({
             );
           })}
         </svg>
+        <div className="rank-legend" aria-label="Chart legend">
+          <span><i className="positive-key" />More housing investment than income predicts</span>
+          <span><i className="negative-key" />Less than income predicts</span>
+          <span><i className="diagonal-key" />Expected if housing matched income</span>
+        </div>
         <div className="chart-tooltip" aria-live="polite">
           {active ? (
             <>
@@ -434,8 +439,8 @@ export function MixChart({ rows }: { rows: Mix[] }) {
   const stages = ["New construction", "Alterations", "Other"];
   return (
     <ChartPanel
-      title="Building new, or maintaining what’s here?"
-      subtitle="Share of permits by work stage, within each development tier"
+      title="New construction changes the mix"
+      subtitle={`New construction: ${percent(rows.find(r => r.development_tier === "Mostly maintenance" && r.work_stage === "New construction")?.share_of_tier_permits)} of permits in mostly-maintenance ZIPs vs ${percent(rows.find(r => r.development_tier === "High investment" && r.work_stage === "New construction")?.share_of_tier_permits)} in high-investment ZIPs.`}
       headers={["Tier", "Work stage", "Permits", "Share"]}
       rows={rows.map((r) => [
         r.development_tier,
@@ -447,7 +452,7 @@ export function MixChart({ rows }: { rows: Mix[] }) {
       <div className="mix-chart">
         {tiers.map((tier) => (
           <div key={tier}>
-            <p>{tier}</p>
+            <p className="mix-row-label"><span>{tier}</span><strong>{percent(rows.find(r => r.development_tier === tier && r.work_stage === "New construction")?.share_of_tier_permits)} new construction</strong></p>
             <div className="stacked-bar">
               {stages.map((stage, i) => {
                 const row = rows.find(
