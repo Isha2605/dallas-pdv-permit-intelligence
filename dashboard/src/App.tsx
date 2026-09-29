@@ -517,17 +517,17 @@ function Story({
               </div>
               <p className="story-body">
                 With median household income of{" "}
-                {money(z.median_household_income)}, {k.story_zip} records{" "}
-                {money(z.housing_value_per_resident)} in housing value per
+                {money(z.median_household_income, true)}, {k.story_zip} records{" "}
+                {money(z.housing_value_per_resident, true)} in housing value per
                 resident. In {k.story_compare_zip}, it’s{" "}
-                {money(other.housing_value_per_resident)}.
+                {money(other.housing_value_per_resident, true)}.
               </p>
               <div className="guardrail">
                 <strong>Beats expectations, not the city.</strong>
                 <p>
-                  {money(z.housing_value_per_resident)} per resident is still
+                  {money(z.housing_value_per_resident, true)} per resident is still
                   below the city median of{" "}
-                  {money(k.median_housing_value_per_resident)}.
+                  {money(k.median_housing_value_per_resident, true)}.
                 </p>
               </div>
               <Button onClick={explore}>
@@ -590,7 +590,7 @@ function Story({
                 {[z, other].map((zip) => (
                   <div key={zip.zip_code}>
                     <span>ZIP {zip.zip_code}</span>
-                    <strong>{money(zip.housing_value_per_resident)}</strong>
+                    <strong>{money(zip.housing_value_per_resident, true)}</strong>
                     <p>housing value / resident</p>
                     <span>
                       {percent(zip.new_construction_share_of_housing)} from new
@@ -618,21 +618,15 @@ function Story({
             </button>
           ))}
         </div>
-        <button
-          className="text-button"
-          disabled={step === 0}
-          onClick={() => next(step - 1)}
-        >
-          ← Back
-        </button>
+
       </div>
-      <div className="study-totals">
+      {step === 0 && <div className="study-totals">
         <div>
           <strong>{number(k.total_permits)}</strong>
           <span>building permits</span>
         </div>
         <div>
-          <strong>{money(k.total_value, true)}</strong>
+          <strong>{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2 }).format(k.total_value)}</strong>
           <span>declared permit value</span>
         </div>
         <div>
@@ -643,7 +637,7 @@ function Story({
           <strong>{k.neighborhood_count}</strong>
           <span>neighborhoods compared</span>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
@@ -935,11 +929,11 @@ function ZipCard({
       <div className="profile-metrics">
         <Metric
           label="Housing value / resident"
-          value={money(z.housing_value_per_resident)}
+          value={money(z.housing_value_per_resident, true)}
         />
         <Metric
           label="Median household income"
-          value={money(z.median_household_income)}
+          value={money(z.median_household_income, true)}
         />
         <Metric
           label="Income rank"
@@ -963,7 +957,7 @@ function ZipCard({
           <strong>Beats expectations, not the city.</strong>
           <p>
             Below the city median of{" "}
-            {money(data.kpi.median_housing_value_per_resident)} per resident.
+            {money(data.kpi.median_housing_value_per_resident, true)} per resident.
           </p>
         </div>
       )}
