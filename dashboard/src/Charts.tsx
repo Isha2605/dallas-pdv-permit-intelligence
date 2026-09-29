@@ -498,13 +498,13 @@ export function TrendChart({ rows }: { rows: Rolling[] }) {
     );
   const x = scaleLinear()
     .domain([0, Math.max(rows.length - 1, 1)])
-    .range([15, width - 15]);
+    .range([65, width - 20]);
   const y = scaleLinear()
     .domain([
       0,
       Math.max(...valid.map((r) => r.housing_value_per_resident!), 1),
     ])
-    .range([105, 15]);
+    .range([145, 40]);
   // Missing windows break the line rather than implying an observed value.
   const path = rows
     .map((r, i) =>
@@ -534,11 +534,16 @@ export function TrendChart({ rows }: { rows: Rolling[] }) {
     >
       <svg
         ref={ref}
-        viewBox={`0 0 ${width} 140`}
+        viewBox={`0 0 ${width} 190`}
         role="group"
         aria-label="Housing value per resident over trailing twelve-month windows"
       >
-        <line className="grid" x1={15} x2={width - 15} y1={105} y2={105} />
+        {y.ticks(2).map(t => <g key={t}>
+          <line className="grid" x1={65} x2={width - 20} y1={y(t)} y2={y(t)} />
+          <text x={56} y={y(t) + 4} textAnchor="end">{money(t, true)}</text>
+        </g>)}
+        {[valid[0], valid.at(-1)!].map((r, i) => <text key={i} x={x(rows.indexOf(r))} y={y(r.housing_value_per_resident!) - 13} textAnchor={i ? "end" : "start"} className="trend-end-label">{money(r.housing_value_per_resident)}</text>)}
+        {rows.map((r, i) => r.tier_changed && <path key={r.as_of_date} className="tier-change-marker" d={`M${x(i)} 151 l5 7 l-5 7 l-5 -7 Z`} tabIndex={0} role="img" aria-label={`${month(r.as_of_date)}: Moved to ${r.development_tier}`}><title>{month(r.as_of_date)}: Moved to {r.development_tier}</title></path>)}
         <path className="series-line" d={path} />
         {rows.map(
           (r, i) =>
@@ -564,10 +569,10 @@ export function TrendChart({ rows }: { rows: Rolling[] }) {
               </circle>
             ),
         )}
-        <text x={15} y={130}>
+        <text x={65} y={183}>
           {month(rows[0].as_of_date)}
         </text>
-        <text x={width - 15} y={130} textAnchor="end">
+        <text x={width - 20} y={183} textAnchor="end">
           {month(rows.at(-1)!.as_of_date)}
         </text>
       </svg>

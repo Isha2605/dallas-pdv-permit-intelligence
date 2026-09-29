@@ -3219,3 +3219,6 @@ footer {
 .negative-key { background: var(--red); }
 .rank-legend .diagonal-key { width: 20px; height: 0; border-top: 2px dashed var(--axis); border-radius: 0; }
 .story-dot { fill: var(--blue); stroke: var(--text); stroke-width: 3px; }
+
+.trend-end-label { fill: var(--text); font-weight: 600; }
+.tier-change-marker { fill: var(--surface); stroke: var(--text); stroke-width: 2px; }
