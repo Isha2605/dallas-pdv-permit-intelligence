@@ -62,3 +62,7 @@ Then rebuild and deploy. Do not put credentials in this frontend. `src/data.ts` 
 - `tests/`: data contract and production-path checks.
 
 This is an independent portfolio study, not an official City of Dallas service.
+
+### Optional muted basemap
+
+CARTO now requires a browser API key. Copy `.env.example` to `.env.local`, set `VITE_CARTO_API_KEY`, and rebuild. The key is included in browser requests; use a key intended for this public site. Without a key, the map displays local Census ZIP boundaries. CARTO light/dark label-free tiles use OpenStreetMap and CARTO attribution. See https://carto.com/basemaps/apikey/ for current terms.

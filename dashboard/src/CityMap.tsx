@@ -43,17 +43,18 @@ export default function CityMap({
       attributionControl: true,
     }).setView([32.83, -96.8], 10);
     mapRef.current = map;
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const basemapKey = import.meta.env.VITE_CARTO_API_KEY;
+    if (basemapKey) L.tileLayer(`https://basemaps.cartocdn.com/${dark ? "dark_nolabels" : "light_nolabels"}/{z}/{x}/{y}.png?api_key=${encodeURIComponent(basemapKey)}`, {
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attribution/">CARTO</a>',
         maxZoom: 18,
-        className: "street-tile",
+        className: "muted-basemap",
       })
         .on("tileerror", () => {
           if (alive) setTileError(true);
         })
         .addTo(map);
-    if (hero) map.attributionControl.addAttribution("US Census ZIP boundaries");
+    map.attributionControl.addAttribution("US Census ZIP boundaries");
     const colors = {
       high: dark ? "#9ec5f4" : "#104281",
       moderate: dark ? "#3987e5" : "#2a78d6",
@@ -86,13 +87,13 @@ export default function CityMap({
                 : gapColor(z!.beats_income_by!);
             return {
               fillColor: fill,
-              fillOpacity: 0.82,
+              fillOpacity: 0.95,
               color:
                 selected === z?.zip_code
                   ? "#eb6834"
                   : dark
-                    ? "#575752"
-                    : "#ffffff",
+                    ? "#1a1a19"
+                    : "#fcfcfb",
               weight: selected === z?.zip_code ? 3 : 1,
               opacity: 1,
             };
@@ -175,8 +176,8 @@ export default function CityMap({
               feature?.properties.zip_code === selected
                 ? "#eb6834"
                 : dark
-                  ? "#575752"
-                  : "#ffffff",
+                  ? "#1a1a19"
+                  : "#fcfcfb",
             weight: feature?.properties.zip_code === selected ? 3 : 1,
           });
           if (feature?.properties.zip_code === selected)
