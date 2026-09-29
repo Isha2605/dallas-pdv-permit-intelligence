@@ -166,15 +166,7 @@ export const number = (n: number | null | undefined) =>
   n == null
     ? "Not available"
     : new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(n);
-export const money = (n: number | null | undefined, compact = false) =>
-  n == null
-    ? "Not available"
-    : new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        notation: compact ? "compact" : "standard",
-        maximumFractionDigits: compact ? 2 : 0,
-      }).format(n);
+export { money, formatWorkDescription } from "./format";
 export const percent = (n: number | null | undefined, digits = 0) =>
   n == null
     ? "Not available"

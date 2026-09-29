@@ -13,6 +13,7 @@ import {
   loadInsights,
   number,
   money,
+  formatWorkDescription,
   percent,
   month,
   signed,
@@ -1004,17 +1005,15 @@ function ZipCard({
         <ol className="work-list">
           {items.map((w) => (
             <li key={w.rank_in_zip}>
-              <span>
-                {w.work_description
-                  .toLowerCase()
-                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+              <span title={w.work_description}>
+                {formatWorkDescription(w.work_description)}
                 <small>
                   {number(w.permit_count)}{" "}
                   {w.permit_count === 1 ? "permit" : "permits"}
                 </small>
               </span>
-              <strong title={money(w.total_value)}>
-                {money(w.total_value, true)}
+              <strong className={w.total_value === 0 ? "no-value" : undefined} title={w.total_value === 0 ? "No value declared" : money(w.total_value)}>
+                {w.total_value === 0 ? "No value declared" : money(w.total_value, true)}
               </strong>
             </li>
           ))}
