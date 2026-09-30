@@ -30,6 +30,8 @@ jobs:
       - run: npm test
         working-directory: dashboard
       - run: npm run build
+        env:
+          VITE_CARTO_API_KEY: ${{ secrets.VITE_CARTO_API_KEY }}
         working-directory: dashboard
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
