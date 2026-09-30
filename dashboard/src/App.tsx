@@ -487,15 +487,16 @@ function Story({
               </div>
               <p className="story-body">
                 Across {k.neighborhood_count} neighborhoods, income and housing
-                investment are moderately related. But places like {k.story_zip}{" "}
-                rise above their income rank.
+                investment are moderately related. But some neighborhoods see
+                far more housing investment than their income rank would
+                predict, and others far less.
               </p>
               <p className="small-note">
                 Housing dollars per resident measures residential work.
                 Hospitals and warehouses are excluded.
               </p>
               <Button onClick={() => next(3)}>
-                Meet the exception <Icon name="arrow" />
+                Look at one neighborhood <Icon name="arrow" />
               </Button>
             </>
           )}
@@ -533,6 +534,12 @@ function Story({
                   {money(k.median_housing_value_per_resident, true)}.
                 </p>
               </div>
+              <p className="story-body">
+                More investment than income predicts can mean new homes for
+                current residents, or new development that changes a
+                neighborhood. Permits alone can’t tell which. That’s a question
+                for planners on the ground.
+              </p>
               <Button onClick={explore}>
                 Explore the city <Icon name="arrow" />
               </Button>
@@ -844,7 +851,8 @@ function Explore({
           <h2>Needs a closer look</h2>
           <p>
             The five neighborhoods where housing investment falls furthest below
-            income rank. A prompt for investigation, not a verdict.
+            income rank. A prompt for investigation, not a verdict. Large gaps
+            in either direction are worth a closer look.
           </p>
         </div>
         <div className="shortfall-list">
@@ -1401,6 +1409,13 @@ function Methodology({ data }: { data: Data }) {
                 A permit is an authorization, not proof that work was completed.
                 Dollars do not measure housing affordability, access, or
                 displacement.
+              </li>
+              <li>
+                More housing investment than income predicts is not
+                automatically good or bad. It can mean new homes for current
+                residents, or development that changes a neighborhood. Permits
+                alone cannot tell which; large gaps in either direction need
+                local investigation.
               </li>
               <li>The last quarter is partial: July and August 2020.</li>
             </ul>
