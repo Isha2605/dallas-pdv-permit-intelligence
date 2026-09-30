@@ -230,11 +230,11 @@ export default function CityMap({
           <>
             <span>
               <i className="negative-fill" />
-              Below income rank
+              Less housing investment than income predicts
             </span>
             <span>
               <i className="moderate-fill" />
-              Above income rank
+              More housing investment than income predicts
             </span>
           </>
         )}
