@@ -26,6 +26,7 @@ import {
   type Work,
   type Rolling,
   type Quarter,
+  type HoldoutQuarter,
   type Mix,
 } from "./data";
 import {
@@ -1207,6 +1208,7 @@ function Insights({
 }) {
   const [extra, setExtra] = useState<{
     quarters: Quarter[];
+    holdout: HoldoutQuarter[];
     mix: Mix[];
   } | null>(null);
   const [error, setError] = useState("");
@@ -1241,7 +1243,11 @@ function Insights({
         </div>
         {extra ? (
           <>
-            <QuarterlyChart rows={extra.quarters} />
+            <QuarterlyChart
+              rows={extra.quarters}
+              holdout={extra.holdout}
+              kpi={data.kpi}
+            />
             <MixChart rows={extra.mix} />
           </>
         ) : error ? (

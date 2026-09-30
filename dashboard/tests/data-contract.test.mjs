@@ -66,3 +66,33 @@ test("share fields stay fractional and supporting charts have expected groups", 
     assert.ok(m.share_of_tier_permits >= 0 && m.share_of_tier_permits <= 1);
   for (const w of work) assert.ok(w.rank_in_zip >= 1 && w.rank_in_zip <= 5);
 });
+
+test("holdout quarters join to study quarters and exported narrative fields", async () => {
+  const [k, quarters, holdout, pairs] = await Promise.all(
+    ["kpi_summary", "quarterly", "quarterly_holdout", "pairs"].map(read),
+  );
+  assert.equal(holdout.length, k.holdout_quarter_count);
+  assert.equal(pairs.length, k.pair_count);
+  assert.ok(
+    k.pair_value_ratio_min <= k.pair_value_ratio_median &&
+      k.pair_value_ratio_median <= k.pair_value_ratio_max,
+  );
+  for (const h of holdout) {
+    const q = quarters.find((q) => q.quarter_start === h.quarter_start);
+    assert.ok(q);
+    assert.ok(h.quarter_start >= "2019-01-01");
+    assert.equal(h.big_project_count, q.big_project_count);
+    assert.equal(h.baseline_high_zip_count, k.holdout_high_zip_count);
+    assert.equal(h.baseline_zip_count, k.holdout_zip_count);
+    assert.ok(
+      h.baseline_high_share >= k.holdout_high_share_min &&
+        h.baseline_high_share <= k.holdout_high_share_max,
+    );
+    assert.ok(
+      Math.abs(
+        h.baseline_high_share -
+          h.baseline_high_big_project_count / h.big_project_count,
+      ) < 0.000001,
+    );
+  }
+});

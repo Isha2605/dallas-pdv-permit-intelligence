@@ -10,6 +10,8 @@ import {
   type Zip,
   type Pair,
   type Quarter,
+  type HoldoutQuarter,
+  type KPI,
   type Mix,
   type Rolling,
 } from "./data";
@@ -363,30 +365,56 @@ export function ShareBars({ top, bottom }: { top: number; bottom: number }) {
   );
 }
 
-export function QuarterlyChart({ rows }: { rows: Quarter[] }) {
+export function QuarterlyChart({
+  rows,
+  holdout,
+  kpi,
+}: {
+  rows: Quarter[];
+  holdout: HoldoutQuarter[];
+  kpi: KPI;
+}) {
   const [active, setActive] = useState<Quarter | null>(null);
   const { ref, width } = usePlotWidth();
   const x = scaleLinear()
     .domain([0, rows.length - 1])
     .range([45, width - 35]);
   const y = scaleLinear().domain([0, 1]).range([225, 24]);
+  const baseline = (q: Quarter) =>
+    holdout.find((h) => h.quarter_start === q.quarter_start);
+  const describe = (q: Quarter) => {
+    const h = baseline(q);
+    return `${q.quarter_label}: ZIPs high-investment in 2018: ${h ? percent(h.baseline_high_share, 1) : "Not evaluated (baseline year)"}; study-period tiers: ${percent(q.high_investment_share, 1)}`;
+  };
   return (
     <ChartPanel
       title="Big projects keep returning to the same places"
-      subtitle="High-investment ZIPs’ share of $1M+ projects each quarter"
-      headers={["Quarter", "$1M+ projects", "In high-investment ZIPs", "Share"]}
-      rows={rows.map((q) => [
-        q.quarter_label,
-        number(q.big_project_count),
-        number(q.high_investment_big_project_count),
-        percent(q.high_investment_share, 1),
-      ])}
+      subtitle={`Share of each quarter’s $1M+ projects going to the ${number(kpi.holdout_high_zip_count)} ZIPs that were already high-investment in 2018.`}
+      headers={[
+        "Quarter",
+        "$1M+ projects",
+        "2018-baseline ZIPs: projects",
+        "2018-baseline share",
+        "Study-period ZIPs: projects",
+        "Study-period share",
+      ]}
+      rows={rows.map((q) => {
+        const h = baseline(q);
+        return [
+          q.quarter_label,
+          number(q.big_project_count),
+          h ? number(h.baseline_high_big_project_count) : "Not evaluated",
+          h ? percent(h.baseline_high_share, 1) : "Baseline year",
+          number(q.high_investment_big_project_count),
+          percent(q.high_investment_share, 1),
+        ];
+      })}
     >
       <svg
         ref={ref}
         viewBox={`0 0 ${width} 270`}
         role="group"
-        aria-label="Quarterly share of big projects in high-investment ZIPs"
+        aria-label="Quarterly shares for 2018-baseline ZIPs and study-period high-investment ZIPs"
       >
         {[0, 0.5, 1].map((t) => (
           <g key={t}>
@@ -403,43 +431,82 @@ export function QuarterlyChart({ rows }: { rows: Quarter[] }) {
           </g>
         ))}
         <polyline
-          className="series-line"
+          className="series-line context-series"
           points={rows
             .map((q, i) => `${x(i)},${y(q.high_investment_share)}`)
             .join(" ")}
         />
-        {rows.map((q, i) => (
-          <g key={q.quarter_label}>
-            <circle
-              className="rank-dot positive-dot"
-              cx={x(i)}
-              cy={y(q.high_investment_share)}
-              r={5}
-              tabIndex={0}
-              role="img"
-              aria-label={`${q.quarter_label}: ${percent(q.high_investment_share, 1)}`}
-              onMouseEnter={() => setActive(q)}
-              onMouseLeave={() => setActive(null)}
-              onFocus={() => setActive(q)}
-              onBlur={() => setActive(null)}
-            >
-              <title>
-                {q.quarter_label}: {percent(q.high_investment_share, 1)}
-              </title>
-            </circle>
-            {(width < 450 ? i === 0 || i === rows.length - 1 : i % 2 === 0) && (
-              <text x={x(i)} y={250} textAnchor="middle">
-                {q.quarter_label}
-              </text>
-            )}
-          </g>
-        ))}
+        <polyline
+          className="series-line holdout-series"
+          points={holdout
+            .map(
+              (h) =>
+                `${x(rows.findIndex((q) => q.quarter_start === h.quarter_start))},${y(h.baseline_high_share)}`,
+            )
+            .join(" ")}
+        />
+        {rows.map((q, i) => {
+          const h = baseline(q);
+          return (
+            <g key={q.quarter_start}>
+              {[
+                { value: q.high_investment_share, cls: "context-dot" },
+                ...(h
+                  ? [{ value: h.baseline_high_share, cls: "positive-dot" }]
+                  : []),
+              ].map(({ value, cls }) => (
+                <circle
+                  key={cls}
+                  className={`rank-dot ${cls}`}
+                  cx={x(i)}
+                  cy={y(value)}
+                  r={cls === "positive-dot" ? 5 : 3.5}
+                  tabIndex={0}
+                  role="img"
+                  aria-label={describe(q)}
+                  onMouseEnter={() => setActive(q)}
+                  onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(q)}
+                  onBlur={() => setActive(null)}
+                >
+                  <title>{describe(q)}</title>
+                </circle>
+              ))}
+              {(width < 450
+                ? i === 0 || i === rows.length - 1
+                : i % 2 === 0) && (
+                <text x={x(i)} y={250} textAnchor="middle">
+                  {q.quarter_label}
+                </text>
+              )}
+            </g>
+          );
+        })}
       </svg>
+      <div className="rank-legend quarterly-legend">
+        <span>
+          <i className="positive-key" />
+          ZIPs high-investment in 2018
+        </span>
+        <span>
+          <i className="context-key" />
+          Study-period high-investment ZIPs
+        </span>
+      </div>
       <div className="chart-tooltip" aria-live="polite">
         {active
-          ? `${active.quarter_label}: ${percent(active.high_investment_share, 1)} · ${number(active.high_investment_big_project_count)} of ${number(active.big_project_count)} big projects`
-          : "Dashed line: 50% of projects. Q3 2020 includes July and August only."}
+          ? describe(active)
+          : "Hover or focus either line’s dots to compare both series. Dashed line: 50%."}
       </div>
+      <p className="small-note">
+        Those {number(kpi.holdout_high_zip_count)} ZIPs are{" "}
+        {percent(kpi.holdout_high_zip_count / kpi.holdout_zip_count)} of the
+        map, yet drew {percent(kpi.holdout_high_share_min)}–
+        {percent(kpi.holdout_high_share_max)} of $1M+ projects in each of the{" "}
+        {number(kpi.holdout_quarter_count)} later quarters. Tiers set from 2018
+        only, so later quarters are an independent check. Q3 2020 includes July
+        and August only.
+      </p>
     </ChartPanel>
   );
 }

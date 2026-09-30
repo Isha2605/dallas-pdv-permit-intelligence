@@ -28,6 +28,15 @@ export interface Zip {
   beats_income_by: number | null;
 }
 export interface KPI {
+  pair_count: number;
+  pair_value_ratio_min: number;
+  pair_value_ratio_median: number;
+  pair_value_ratio_max: number;
+  holdout_high_zip_count: number;
+  holdout_zip_count: number;
+  holdout_quarter_count: number;
+  holdout_high_share_min: number;
+  holdout_high_share_max: number;
   total_permits: number;
   total_value: number;
   first_issued_date: string;
@@ -70,6 +79,15 @@ export interface Work {
   work_description: string;
   permit_count: number;
   total_value: number;
+}
+export interface HoldoutQuarter {
+  quarter_start: string;
+  quarter_label: string;
+  big_project_count: number;
+  baseline_high_big_project_count: number;
+  baseline_high_share: number;
+  baseline_high_zip_count: number;
+  baseline_zip_count: number;
 }
 export interface Quarter {
   quarter_start: string;
@@ -145,11 +163,12 @@ export const loadBoundaries = () => read<FeatureCollection>("zip_boundaries");
 export const loadRolling = () => read<Rolling[]>("zip_rolling");
 export const loadWork = () => read<Work[]>("top_housing_work");
 export const loadInsights = async () => {
-  const [quarters, mix] = await Promise.all([
+  const [quarters, mix, holdout] = await Promise.all([
     read<Quarter[]>("quarterly"),
     read<Mix[]>("work_mix"),
+    read<HoldoutQuarter[]>("quarterly_holdout"),
   ]);
-  return { quarters, mix };
+  return { quarters, mix, holdout };
 };
 export const tiers: Tier[] = [
   "High investment",

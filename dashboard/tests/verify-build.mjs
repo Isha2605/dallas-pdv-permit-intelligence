@@ -31,7 +31,7 @@ for (const name of sources.filter((name) => name.endsWith(".json"))) {
 
 const firstLoad = names.filter(
   (name) =>
-    !/^(zip_rolling|kpi_rolling|top_housing_work|quarterly|work_mix)-/.test(
+    !/^(zip_rolling|kpi_rolling|top_housing_work|quarterly|quarterly_holdout|work_mix)-/.test(
       name,
     ),
 );
@@ -42,7 +42,7 @@ assert.ok(
   `First-party initial payload exceeds 2 MB: ${bytes} bytes`,
 );
 console.log(
-  `Production verified: GitHub Pages paths, all 10 unchanged JSON exports, ${(bytes / 1_000_000).toFixed(2)} MB initial first-party assets before compression.`,
+  `Production verified: GitHub Pages paths, all ${sources.filter((name) => name.endsWith(".json")).length} unchanged JSON exports, ${(bytes / 1_000_000).toFixed(2)} MB initial first-party assets before compression.`,
 );
 console.log(
   "External font and map tiles are additional; network timing is connection-dependent.",
