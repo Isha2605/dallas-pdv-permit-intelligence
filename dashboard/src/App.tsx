@@ -22,6 +22,7 @@ import {
   headline,
   downloadCSV,
   type Data,
+  type KPI,
   type Zip,
   type Work,
   type Rolling,
@@ -453,6 +454,7 @@ function Story({
                   with similar permit counts.
                 </span>
               </div>
+              <PairContext kpi={k} widest />
               <p className="story-body">
                 ZIP {pair.high_investment_zip} has{" "}
                 {number(pair.high_investment_big_projects)} projects valued at
@@ -1199,6 +1201,19 @@ function Compare({
   );
 }
 
+function PairContext({ kpi, widest = false }: { kpi: KPI; widest?: boolean }) {
+  return (
+    <p className="small-note pair-context">
+      {widest ? "The widest of " : "Across "}
+      {number(kpi.pair_count)} matched pairs.{" "}
+      {widest ? "Across all of them, the gap runs" : "The gap runs"} from{" "}
+      {kpi.pair_value_ratio_min.toFixed(1)}× to{" "}
+      {number(kpi.pair_value_ratio_max)}×; the typical pair differs about{" "}
+      {number(kpi.pair_value_ratio_median)}×.
+    </p>
+  );
+}
+
 function Insights({
   data,
   onSelect,
@@ -1274,6 +1289,7 @@ function Insights({
               </option>
             ))}
           </select>
+          <PairContext kpi={data.kpi} />
           <PairChart pair={data.pairs.find((p) => p.pair_rank === pairRank)!} />
         </section>
         <ShareBars
