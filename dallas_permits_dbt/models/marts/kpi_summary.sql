@@ -127,6 +127,31 @@ story as (
                                                   as story_zip_new_sfd_permits
     from poorest p
 
+),
+
+-- Context for the side-by-side pair: is the headline pair typical or the extreme?
+pair_range as (
+
+    select
+        count(*)                   as pair_count,
+        min(value_ratio)           as pair_value_ratio_min,
+        median(value_ratio)        as pair_value_ratio_median,
+        max(value_ratio)           as pair_value_ratio_max
+    from {{ ref('zip_comparison_pairs') }}
+
+),
+
+-- Non-circular version of the quarterly claim (tiers set from 2018 only).
+holdout as (
+
+    select
+        any_value(baseline_high_zip_count) as holdout_high_zip_count,
+        any_value(baseline_zip_count)      as holdout_zip_count,
+        count(*)                           as holdout_quarter_count,
+        min(baseline_high_share)           as holdout_high_share_min,
+        max(baseline_high_share)           as holdout_high_share_max
+    from {{ ref('tier_holdout_quarterly') }}
+
 )
 
 select *
@@ -135,3 +160,5 @@ cross join tiers
 cross join centerpiece
 cross join extremes
 cross join story
+cross join pair_range
+cross join holdout

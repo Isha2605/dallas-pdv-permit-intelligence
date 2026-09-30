@@ -45,6 +45,7 @@ EXPORTS = {
     "zips":              "select * from zip_development order by zip_code",
     "top_housing_work":  "select * from zip_top_housing_work order by zip_code, rank_in_zip",
     "quarterly":         "select * from tier_quarterly_big_projects order by quarter_start",
+    "quarterly_holdout": "select * from tier_holdout_quarterly order by quarter_start",
     "work_mix":          "select * from tier_work_mix order by development_tier, work_stage",
     "pairs":             "select * from zip_comparison_pairs order by pair_rank",
     "kpi_rolling":       "select * from kpi_rolling_12m order by as_of_date",

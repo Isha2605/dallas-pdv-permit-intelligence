@@ -71,6 +71,19 @@ models:
           - unique
           - not_null
 
+  - name: tier_holdout_quarterly
+    description: >
+      Non-circular check: tiers set from 2018 permits only, then the share of each later
+      quarter's $1M+ projects that went to the ZIPs that were high-investment in 2018.
+    columns:
+      - name: quarter_start
+        tests:
+          - unique
+          - not_null
+      - name: baseline_high_share
+        tests:
+          - not_null
+
   - name: zip_rolling_12m
     description: >
       One row per ZIP per month: every zip_development metric over the 12 months ending
